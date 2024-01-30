@@ -1,4 +1,4 @@
-class Uesr:
+class User:
     id=None
     token=None
     LoginData=None
