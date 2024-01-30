@@ -1,0 +1,8 @@
+# 日志
+log:
+  # 是否开启info等级日志
+  info: True
+  # 是否开启warn等级日志
+  warn: True
+  # 是否开启error等级日志
+  error: True
