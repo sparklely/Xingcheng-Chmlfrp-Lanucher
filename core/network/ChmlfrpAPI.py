@@ -14,7 +14,6 @@ def login(Name,Password):
         User.LoginData = data
         return True
     except:
-        return False
         log.warn("{Name} 无法登录")
         return False
 
