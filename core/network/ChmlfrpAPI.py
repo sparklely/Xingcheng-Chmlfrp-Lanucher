@@ -6,7 +6,7 @@ import requests
 def login(Name,Password):
     try:
         data = requests.get("https://panel.chmlfrp.cn/api/login.php",{"username": Name,"password":Password}).json()
-        log.info("{Name} 尝试登录")
+        log.info("尝试登录...")
         data=requests.get("https://panel.chmlfrp.cn/api/login.php",{"username": Name,"password":Password}).json()
         # 放入数据
         User.id = data['userid']
@@ -14,7 +14,7 @@ def login(Name,Password):
         User.LoginData = data
         return True
     except:
-        log.warn("{Name} 无法登录")
+        log.error("登录失败")
         return False
 
 # 隧道列表获取
