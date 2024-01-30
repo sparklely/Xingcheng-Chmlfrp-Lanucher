@@ -1,6 +1,7 @@
+import requests
+
 from core.g_var import User
 from core.module import log
-import requests
 
 # 登录
 def login(Name,Password):
