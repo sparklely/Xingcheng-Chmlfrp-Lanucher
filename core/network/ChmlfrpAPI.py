@@ -8,6 +8,7 @@ def login(Name,Password):
         # 放入数据
         Uesr.id=data['userid']
         Uesr.token=data['token']
+        Uesr.LoginData=data
         return True
     except:return False
 
