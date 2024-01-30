@@ -1,4 +1,4 @@
-from initialize.config import config
+from core.initialize.config import config
 from datetime import datetime
 
 # 获取时间
@@ -20,6 +20,6 @@ def warn(text):
     if config.config["log"]["warn"]:
         _log(f"[{_time()} warn] {text}")
 # error处理
-def info(text):
+def error(text):
     if config.config["log"]["error"]:
         _log(f"[{_time()} error] {text}")
