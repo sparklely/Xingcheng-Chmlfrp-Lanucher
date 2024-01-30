@@ -1,4 +1,8 @@
+from typing import TypeAlias
+
+JSON: TypeAlias = dict
+
 class User:
-    id=None
-    token=None
-    LoginData=None
+    id: int = None
+    token: str = None
+    LoginData: JSON = None
