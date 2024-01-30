@@ -1,5 +1,5 @@
 from core.module import log
-from core.command import run
+from core.GUI import run
 from core.initialize.CheckFile import CheckFrp
 
 

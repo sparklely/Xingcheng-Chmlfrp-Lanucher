@@ -1,4 +1,4 @@
 import yaml
 
-class config:
+class Config:
     config=yaml.safe_load(open("config.yml",'r',encoding="UTF-8").read())
