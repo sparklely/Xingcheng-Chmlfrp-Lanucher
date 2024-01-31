@@ -20,6 +20,6 @@ def warn(text):
     if Config.config["log"]["warn"]:
         _log(f"[{_time()} warn] {text}")
 # error处理
-def info(text):
+def error(text):
     if Config.config["log"]["error"]:
         _log(f"[{_time()} error] {text}")
