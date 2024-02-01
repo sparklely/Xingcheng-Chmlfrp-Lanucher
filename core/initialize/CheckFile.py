@@ -4,6 +4,6 @@ import os
 def CheckFrp():
     # 判断系统类型
     if os.name=="nt":
-        return os.path.isfile("./frpc.exe") and os.path.isfile("./frps.exe")
+        return os.path.isfile("./frp/frpc.exe") and os.path.isfile("./frp/frps.exe")
     else:
-        return os.path.isfile("./frpc") and os.path.isfile("./frps")
+        return os.path.isfile("./frp/frpc") and os.path.isfile("./frp/frps")

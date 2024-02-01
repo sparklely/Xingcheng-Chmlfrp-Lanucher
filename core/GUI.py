@@ -6,8 +6,8 @@ class Login(ctk.CTk):
     def __init__(self):
         super().__init__()
         self.title("XingCheng Chmlfrp Lanucher - login")
-        self.geometry("350x200")
-        self.iconbitmap("./core/chmlfrp.ico")
+        self.geometry("320x200")
+        self.iconbitmap("./chmlfrp.ico")
         self.resizable(0, 0)
         self.Login_title=ctk.CTkLabel(self,text="Chmlfrp Login",font=("微软雅黑",16))
         self.Login_title.place(relx=0.03,rely=0.01)
@@ -38,7 +38,7 @@ class App(ctk.CTk):
         super().__init__()
         self.title("XingCheng Chmlfrp Lanucher - main")
         self.geometry("730x420")
-        self.iconbitmap("./core/chmlfrp.ico")
+        self.iconbitmap("./chmlfrp.ico")
         self.resizable(0, 0)
         # start frp
         self.start_frp_button=ctk.CTkButton(self,text="Start Frp",height=40,command=self.button_callback)

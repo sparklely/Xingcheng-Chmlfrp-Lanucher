@@ -19,9 +19,9 @@ def start(tun_id):
             if fash:
                 # 驱动frp核心
                 if os.name=="nt":
-                    os.system("start frpc.exe"+" -u "+User.token+" -p "+tun_id)
+                    os.system("start ./frp/frpc.exe"+" -u "+User.token+" -p "+tun_id)
                 else:
-                    os.system("start frpc"+" -u "+User.token+" -p "+tun_id)
+                    os.system("start ./frp/frpc"+" -u "+User.token+" -p "+tun_id)
                 log.info(f"启动frp: token:{User.token} ID:{tun_id} 已拉起")
                 return False,"已拉起frp核心"
             else:
