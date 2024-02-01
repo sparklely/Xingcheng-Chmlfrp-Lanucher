@@ -16,7 +16,7 @@ def login(Name,Password):
         return True,None
     except:
         log.error("登录失败")
-        return False,None
+        return False,"未知原因"
 
 # 隧道列表获取
 def user_tun():
