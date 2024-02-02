@@ -1,6 +1,6 @@
 from core.network import ChmlfrpAPI
 from core.g_var import User
-from PIL import Image, ImageTk
+from PIL import Image,ImageTk,ImageDraw
 from io import BytesIO
 import requests as reqt
 import customtkinter as ctk
@@ -12,8 +12,8 @@ class info_window:
         tkinter.messagebox.showinfo(title=title,message=text)
 
 class Login(ctk.CTk):
-    def __init__(self,*args,**kwargs):
-        super().__init__(*args,**kwargs)
+    def __init__(self):
+        super().__init__()
         self.title("XingCheng Chmlfrp Lanucher - login")
         self.geometry(f"320x200")
         self.iconbitmap("./chmlfrp.ico")
@@ -51,23 +51,35 @@ class Login(ctk.CTk):
 class App(ctk.CTk):
     def __init__(self):
         super().__init__()
+        #self.overrideredirect(True)
         self.title("XingCheng Chmlfrp Lanucher - main")
         self.geometry("730x420")
         self.iconbitmap("./chmlfrp.ico")
         self.resizable(0, 0)
         # 处理/下载背景图片
-        if not User.LoginData['background_img']=="":
+        if not (User.LoginData['background_img']=='' or User.LoginData['background_img']==None):
             self.bg=Image.open(BytesIO(reqt.get(User.LoginData['background_img']).content))
             self.bg=self.bg.resize((730,420))
             self.bg=ImageTk.PhotoImage(self.bg)
             self.bg_label=ctk.CTkLabel(self,text="",image=self.bg)
             self.bg_label.place(relx=0,rely=0)
+        # 左侧边栏
+        self.Left_sidebar_bg=ctk.CTkLabel(self,text="",height=730,width=173)
+        self.Left_sidebar_bg.place(relx=0,rely=0)
+        self.userimg=Image.open(BytesIO(reqt.get(User.LoginData['userimg']).content))
+        self.userimg=self.userimg.resize((47,47))
+        self.userimg=ImageTk.PhotoImage(self.userimg)
+        self.userimg_label=ctk.CTkLabel(self,text="",image=self.userimg)
+        self.userimg_label.place(relx=0.02,rely=0.05)
+        self.useremail_label=ctk.CTkLabel(self,text=User.LoginData["email"],font=("Arial",11))
+        self.useremail_label.place(x=70,y=40)
+        self.username_label=ctk.CTkLabel(self,text=User.LoginData["username"],font=("Arial",16))
+        self.username_label.place(relx=0.1,rely=0.05)
         # start frp
         self.optionmenu = ctk.CTkOptionMenu(self,height=41,corner_radius=0,command=self.optionmenu_callback,values=["1","2","3","4"])
         self.optionmenu.place(relx=0.77,rely=0.85)
         self.start_frp_button=ctk.CTkButton(self,text="Start Frp\n#0 你TM倒是选a",corner_radius=0,state="disabled",height=40,command=self.button_callback)
         self.start_frp_button.place(relx=0.72,rely=0.85)
-
     # 更新start frp按钮的信息
     def optionmenu_callback(self,choice):
         self.start_frp_button.configure(text=f"Start Frp\n{choice}",state="normal")
