@@ -29,7 +29,7 @@ class Login(ctk.CTk):
         # login Password
         self.Login_password_title=ctk.CTkLabel(self,text="密码",font=("微软雅黑",12.5))
         self.Login_password_title.place(relx=0.14,rely=0.45)
-        self.Login_password=ctk.CTkEntry(self,height=15,width=195)
+        self.Login_password=ctk.CTkEntry(self,height=15,width=195,show="*")
         self.Login_password.place(relx=0.13,rely=0.58)
         # login button
         self.Login_button=ctk.CTkButton(self,text="登录",width=125,command=self.login)
@@ -77,7 +77,8 @@ class App(ctk.CTk):
         self.username_label=ctk.CTkLabel(self,text=User.LoginData["username"],font=("Arial",16))
         self.username_label.place(x=71,rely=0.05)
         # start frp
-        self.optionmenu = ctk.CTkOptionMenu(self,height=41,corner_radius=0,dynamic_resizing=False,command=self.optionmenu_callback,values=App.usertun_TidyUp())
+        App.usertun_TidyUp()
+        self.optionmenu = ctk.CTkOptionMenu(self,height=41,corner_radius=0,dynamic_resizing=False,command=self.optionmenu_callback,values=User.TunList)
         self.optionmenu.place(relx=0.77,rely=0.85)
         self.start_frp_button=ctk.CTkButton(self,text="Start Frp\n#0 你TM倒是选a",corner_radius=0,state="disabled",height=40,command=self.start_frp)
         self.start_frp_button.place(relx=0.72,rely=0.85)
@@ -92,7 +93,7 @@ class App(ctk.CTk):
         re_usertun_list=[]
         for usertun_e in usertun[1]:
             re_usertun_list.append("#"+usertun_e["id"]+" "+usertun_e["name"]+" - "+usertun_e["type"])
-        return re_usertun_list
+        User.TunList=re_usertun_list
 
     # 更新start frp按钮
     def optionmenu_callback(self,choice):
@@ -109,6 +110,8 @@ class App(ctk.CTk):
         tunID=tunID.split(" ")[0][1:]
         # 启动
         StartFrp.start(tunID)
+        # 弹窗
+        info_window.info("正在拉起frp核心","协议: \n连接地址: ")
 
 def run():
     login=Login()

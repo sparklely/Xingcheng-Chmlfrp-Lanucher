@@ -161,3 +161,5 @@ cython_debug/
 frpc.ini
 temp/
 frp/
+out/
+start.exe
