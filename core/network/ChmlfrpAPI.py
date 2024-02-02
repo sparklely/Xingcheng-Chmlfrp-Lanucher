@@ -22,6 +22,10 @@ def user_tun():
     try:
         log.info(f"token:{User.token} 尝试获取隧道信息")
         data=requests.get("https://panel.chmlfrp.cn/api/usertunnel.php",{"token":User.token}).json()
-        return True,data
+        try:
+            if data["code"]==404:
+                return False,["请先创建隧道"]
+        except:
+            return True,data
     except:
         return False,None

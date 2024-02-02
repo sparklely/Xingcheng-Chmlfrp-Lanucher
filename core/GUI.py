@@ -1,4 +1,5 @@
 from core.network import ChmlfrpAPI
+from core.module import StartFrp
 from core.g_var import User
 from PIL import Image,ImageTk,ImageDraw
 from io import BytesIO
@@ -72,19 +73,42 @@ class App(ctk.CTk):
         self.userimg_label=ctk.CTkLabel(self,text="",image=self.userimg)
         self.userimg_label.place(relx=0.02,rely=0.05)
         self.useremail_label=ctk.CTkLabel(self,text=User.LoginData["email"],font=("Arial",11))
-        self.useremail_label.place(x=70,y=40)
+        self.useremail_label.place(x=68,y=40)
         self.username_label=ctk.CTkLabel(self,text=User.LoginData["username"],font=("Arial",16))
-        self.username_label.place(relx=0.1,rely=0.05)
+        self.username_label.place(x=71,rely=0.05)
         # start frp
-        self.optionmenu = ctk.CTkOptionMenu(self,height=41,corner_radius=0,command=self.optionmenu_callback,values=["1","2","3","4"])
+        self.optionmenu = ctk.CTkOptionMenu(self,height=41,corner_radius=0,dynamic_resizing=False,command=self.optionmenu_callback,values=App.usertun_TidyUp())
         self.optionmenu.place(relx=0.77,rely=0.85)
-        self.start_frp_button=ctk.CTkButton(self,text="Start Frp\n#0 你TM倒是选a",corner_radius=0,state="disabled",height=40,command=self.button_callback)
+        self.start_frp_button=ctk.CTkButton(self,text="Start Frp\n#0 你TM倒是选a",corner_radius=0,state="disabled",height=40,command=self.start_frp)
         self.start_frp_button.place(relx=0.72,rely=0.85)
-    # 更新start frp按钮的信息
+    
+    # 处理隧道信息
+    def usertun_TidyUp():
+        usertun=ChmlfrpAPI.user_tun()
+        if usertun[0]==False:
+            if usertun[1]==None:
+                return ["无数据"]
+            return usertun[1]
+        re_usertun_list=[]
+        for usertun_e in usertun[1]:
+            re_usertun_list.append("#"+usertun_e["id"]+" "+usertun_e["name"]+" - "+usertun_e["type"])
+        return re_usertun_list
+
+    # 更新start frp按钮
     def optionmenu_callback(self,choice):
-        self.start_frp_button.configure(text=f"Start Frp\n{choice}",state="normal")
-    def button_callback(self):
-        print("button pressed")
+        if "#" not in choice:
+            self.start_frp_button.configure(text=f"Start Frp\n{choice}")
+        else:
+            self.start_frp_button.configure(text=f"Start Frp\n{choice}",state="normal")
+
+    # 启动frp
+    def start_frp(self):
+        # 获取启动tunID
+        tunID=self.start_frp_button.cget("text")
+        tunID=tunID.split("\n")[1]
+        tunID=tunID.split(" ")[0][1:]
+        # 启动
+        StartFrp.start(tunID)
 
 def run():
     login=Login()

@@ -12,7 +12,7 @@ def start(tun_id):
         data=ChmlfrpAPI.user_tun()
         if data[0]==True:
             fash=False
-            for da in data:
+            for da in data[1]:
                 if da["id"]==tun_id:
                     fash=True
                     break
