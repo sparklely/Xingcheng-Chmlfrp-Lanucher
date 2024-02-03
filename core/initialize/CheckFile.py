@@ -1,9 +1,14 @@
-import os
-
+from os import path,name,makedirs
 # 检查frp核心是否存在
 def CheckFrp():
     # 判断系统类型
-    if os.name=="nt":
-        return os.path.isfile("./frp/frpc.exe") and os.path.isfile("./frp/frps.exe")
+    if name=="nt":
+        return path.isfile("./frp/frpc.exe") and path.isfile("./frp/frps.exe")
     else:
-        return os.path.isfile("./frp/frpc") and os.path.isfile("./frp/frps")
+        return path.isfile("./frp/frpc") and path.isfile("./frp/frps")
+
+# 检查缓存文件夹是否存在
+def CheckTemp():
+    if not path.isdir("temp"):
+        # 不存在创建
+        makedirs("temp")

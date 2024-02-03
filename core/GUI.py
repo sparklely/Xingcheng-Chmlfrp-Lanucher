@@ -3,6 +3,8 @@ from core.module import StartFrp
 from core.g_var import User
 from PIL import Image,ImageTk,ImageDraw
 from io import BytesIO
+from os import path
+import yaml
 import requests as reqt
 import customtkinter as ctk
 import tkinter.messagebox
@@ -34,15 +36,24 @@ class Login(ctk.CTk):
         # login button
         self.Login_button=ctk.CTkButton(self,text="登录",width=125,command=self.login)
         self.Login_button.place(relx=0.56,rely=0.78)
+        # 自动登录
+        self.AutmLogin=ctk.CTkCheckBox(self,checkbox_width=16,checkbox_height=16,text="自动登录",font=("微软雅黑",12))
+        self.AutmLogin.place(relx=0.07,rely=0.75)
 
     # login
     def login(self):
         logining=ChmlfrpAPI.login(self.Login_name.get(),self.Login_password.get())
         if logining[0]:
+            # AutmLogin处理
+            if self.AutmLogin.get()==1:
+                al=open("./temp/AutmLogin.yml","w")
+                data={"enable":True,"name":self.Login_name.get(),"password":self.Login_password.get()}
+                al.write(yaml.safe_dump(data))
+                al.close()
             self.destroy()
             main()
         else:
-            info_window.info("登录失败"," 未知错误 ")
+            info_window.info("登录失败","请检查账号密码是否正确")
     
     # login error
     def login_error(self,error_info):
@@ -115,7 +126,19 @@ class App(ctk.CTk):
 
 def run():
     login=Login()
-    login.mainloop()
+    if path.isfile("./temp/AutmLogin.yml"):
+        # 自动登录处理
+        al=yaml.safe_load(open("./temp/AutmLogin.yml","r").read())
+        if al['enable']==True:
+            logining=ChmlfrpAPI.login(al["name"],al['password'])
+            if logining[0]:
+                login.destroy()
+                main()
+            else:
+                info_window.info("自动登录失败","自动登录失败,点击确认以拉起登录界面")
+                login.mainloop()
+    else:
+        login.mainloop()
 
 def main():
     app=App()
