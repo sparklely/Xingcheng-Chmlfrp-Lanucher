@@ -124,7 +124,7 @@ class App(ctk.CTk):
         deltay=event.y-App.winy
         new_x=GUI.tkObj.winfo_x()+deltax
         new_y=GUI.tkObj.winfo_y()+deltay
-        App.geometry(f"+{new_x}+{new_y}")
+        GUI.tkObj.geometry(f"+{new_x}+{new_y}")
 
     # 处理鼠标释放事件
     def on_drag_stop(event):
