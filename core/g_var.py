@@ -9,3 +9,6 @@ class User:
     token: str = None
     TunList: list = None
     LoginData: dict = None
+
+class GUI:
+    tkObj=None

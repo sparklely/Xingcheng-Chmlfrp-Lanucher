@@ -1,6 +1,6 @@
 from core.network import ChmlfrpAPI
 from core.module import StartFrp
-from core.g_var import User
+from core.g_var import User,GUI
 from PIL import Image,ImageTk,ImageDraw
 from io import BytesIO
 from os import path
@@ -60,10 +60,20 @@ class Login(ctk.CTk):
         # 创建对话窗口
         self.login_error_windows=ctk.CTkInputDialog(text=f"{error_info}", title="登录失败")
 
+# 主窗口左侧边栏按钮
+class Left_sidebar_Button(ctk.CTkFrame):
+    def __init__(self,master):
+        super().__init__(master,fg_color="#dcdcdc",width=173,height=350)
+        # 添加隧道
+        self.add_tun=ctk.CTkButton(self,text="添加隧道",text_color="black",font=("Arial",16.5),width=173,hover_color="#d2d2d2",corner_radius=0,fg_color="transparent")
+        self.add_tun.place(x=0,y=0)
+
 class App(ctk.CTk):
     def __init__(self):
         super().__init__()
-        #self.overrideredirect(True)
+        self.winx=0
+        self.winy=0
+        self.overrideredirect(True)
         self.title("XingCheng Chmlfrp Lanucher - main")
         self.geometry("730x420")
         self.iconbitmap("./chmlfrp.ico")
@@ -75,18 +85,27 @@ class App(ctk.CTk):
             self.bg=ImageTk.PhotoImage(self.bg)
             self.bg_label=ctk.CTkLabel(self,text="",image=self.bg)
             self.bg_label.place(relx=0,rely=0)
-        # 左侧边栏
+        # 识别鼠标拖拽事件
+        self.bind("<ButtonPress-1>",App.on_drag_start)
+        self.bind("<B1-Motion>",App.on_drag)
+        self.bind("<ButtonRelease-1>",App.on_drag_stop)
+        # 左侧边栏背景
         self.Left_sidebar_bg=ctk.CTkLabel(self,text="",height=730,width=173)
         self.Left_sidebar_bg.place(relx=0,rely=0)
+        # 用户头像
         self.userimg=Image.open(BytesIO(reqt.get(User.LoginData['userimg']).content))
         self.userimg=self.userimg.resize((47,47))
         self.userimg=ImageTk.PhotoImage(self.userimg)
         self.userimg_label=ctk.CTkLabel(self,text="",image=self.userimg)
         self.userimg_label.place(relx=0.02,rely=0.05)
+        # 用户邮箱/名字
         self.useremail_label=ctk.CTkLabel(self,text=User.LoginData["email"],font=("Arial",11))
         self.useremail_label.place(x=68,y=40)
         self.username_label=ctk.CTkLabel(self,text=User.LoginData["username"],font=("Arial",16))
         self.username_label.place(x=71,rely=0.05)
+        # 主窗口左侧边栏按钮
+        self.Left_sidebar_Button=Left_sidebar_Button(master=self)
+        self.Left_sidebar_Button.place(relx=0,rely=0.2)
         # start frp
         App.usertun_TidyUp()
         self.optionmenu = ctk.CTkOptionMenu(self,height=41,corner_radius=0,dynamic_resizing=False,command=self.optionmenu_callback,values=User.TunList)
@@ -94,6 +113,24 @@ class App(ctk.CTk):
         self.start_frp_button=ctk.CTkButton(self,text="Start Frp\n#0 你TM倒是选a",corner_radius=0,state="disabled",height=40,command=self.start_frp)
         self.start_frp_button.place(relx=0.72,rely=0.85)
     
+    # 处理鼠标按下事件
+    def on_drag_start(event):
+        App.winx=event.x
+        App.winy=event.y
+
+    # 处理鼠标移动事件
+    def on_drag(event):
+        deltax=event.x-App.winx
+        deltay=event.y-App.winy
+        new_x=GUI.tkObj.winfo_x()+deltax
+        new_y=GUI.tkObj.winfo_y()+deltay
+        App.geometry(f"+{new_x}+{new_y}")
+
+    # 处理鼠标释放事件
+    def on_drag_stop(event):
+        App.winx=0
+        App.winy=0
+
     # 处理隧道信息
     def usertun_TidyUp():
         usertun=ChmlfrpAPI.user_tun()
@@ -141,5 +178,5 @@ def run():
         login.mainloop()
 
 def main():
-    app=App()
-    app.mainloop()
+    GUI.tkObj=App()
+    GUI.tkObj.mainloop()
