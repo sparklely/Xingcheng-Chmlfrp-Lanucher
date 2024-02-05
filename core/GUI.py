@@ -60,76 +60,43 @@ class Login(ctk.CTk):
         # 创建对话窗口
         self.login_error_windows=ctk.CTkInputDialog(text=f"{error_info}", title="登录失败")
 
-# 主窗口左侧边栏按钮
-class Left_sidebar_Button(ctk.CTkFrame):
+# 主窗口切换界面
+class MainTabView(ctk.CTkTabview):
     def __init__(self,master):
-        super().__init__(master,fg_color="#dcdcdc",width=173,height=350)
-        # 添加隧道
-        self.add_tun=ctk.CTkButton(self,text="添加隧道",text_color="black",font=("Arial",16.5),width=173,hover_color="#d2d2d2",corner_radius=0,fg_color="transparent")
-        self.add_tun.place(x=0,y=0)
-
-class App(ctk.CTk):
-    def __init__(self):
-        super().__init__()
-        self.winx=0
-        self.winy=0
-        self.overrideredirect(True)
-        self.title("XingCheng Chmlfrp Lanucher - main")
-        self.geometry("730x420")
-        self.iconbitmap("./chmlfrp.ico")
-        self.resizable(0, 0)
+        super().__init__(master,height=450,width=730,border_width=0,corner_radius=0,fg_color="#116ec8",segmented_button_fg_color="#116ec8",segmented_button_unselected_color="#116ec8",segmented_button_unselected_hover_color="#116ec8",segmented_button_selected_color="#ebebeb",segmented_button_selected_hover_color="#ebebeb",text_color="#aaaaaa")
+        # 页面
+        self.add("   Main   ")
+        self.add("   隧道管理   ")
         # 处理/下载背景图片
         if not (User.LoginData['background_img']=='' or User.LoginData['background_img']==None):
             self.bg=Image.open(BytesIO(reqt.get(User.LoginData['background_img']).content))
             self.bg=self.bg.resize((730,420))
             self.bg=ImageTk.PhotoImage(self.bg)
-            self.bg_label=ctk.CTkLabel(self,text="",image=self.bg)
-            self.bg_label.place(relx=0,rely=0)
-        # 识别鼠标拖拽事件
-        self.bind("<ButtonPress-1>",App.on_drag_start)
-        self.bind("<B1-Motion>",App.on_drag)
-        self.bind("<ButtonRelease-1>",App.on_drag_stop)
+            self.bg_label_main=ctk.CTkLabel(self.tab("   Main   "),text="",image=self.bg)
+            self.bg_label_main.place(x=0,y=0)
+            self.bg_label_tun=ctk.CTkLabel(self.tab("   隧道管理   "),text="",image=self.bg)
+            self.bg_label_tun.place(x=0,y=0)
+        '''Main'''
         # 左侧边栏背景
-        self.Left_sidebar_bg=ctk.CTkLabel(self,text="",height=730,width=173)
+        self.Left_sidebar_bg=ctk.CTkLabel(self.tab("   Main   "),text="",height=730,width=173,bg_color="#ebebeb")
         self.Left_sidebar_bg.place(relx=0,rely=0)
         # 用户头像
         self.userimg=Image.open(BytesIO(reqt.get(User.LoginData['userimg']).content))
         self.userimg=self.userimg.resize((47,47))
         self.userimg=ImageTk.PhotoImage(self.userimg)
-        self.userimg_label=ctk.CTkLabel(self,text="",image=self.userimg)
+        self.userimg_label=ctk.CTkLabel(self.tab("   Main   "),text="",image=self.userimg)
         self.userimg_label.place(relx=0.02,rely=0.05)
         # 用户邮箱/名字
-        self.useremail_label=ctk.CTkLabel(self,text=User.LoginData["email"],font=("Arial",11))
+        self.useremail_label=ctk.CTkLabel(self.tab("   Main   "),text=User.LoginData["email"],font=("Arial",11),bg_color="#ebebeb")
         self.useremail_label.place(x=68,y=40)
-        self.username_label=ctk.CTkLabel(self,text=User.LoginData["username"],font=("Arial",16))
+        self.username_label=ctk.CTkLabel(self.tab("   Main   "),text=User.LoginData["username"],font=("Arial",16),bg_color="#ebebeb")
         self.username_label.place(x=71,rely=0.05)
-        # 主窗口左侧边栏按钮
-        self.Left_sidebar_Button=Left_sidebar_Button(master=self)
-        self.Left_sidebar_Button.place(relx=0,rely=0.2)
         # start frp
-        App.usertun_TidyUp()
-        self.optionmenu = ctk.CTkOptionMenu(self,height=41,corner_radius=0,dynamic_resizing=False,command=self.optionmenu_callback,values=User.TunList)
+        MainTabView.usertun_TidyUp()
+        self.optionmenu = ctk.CTkOptionMenu(self.tab("   Main   "),height=41,corner_radius=0,dynamic_resizing=False,command=self.optionmenu_callback,values=User.TunList)
         self.optionmenu.place(relx=0.77,rely=0.85)
-        self.start_frp_button=ctk.CTkButton(self,text="Start Frp\n#0 你TM倒是选a",corner_radius=0,state="disabled",height=40,command=self.start_frp)
+        self.start_frp_button=ctk.CTkButton(self.tab("   Main   "),text="Start Frp\n#0 你TM倒是选a",corner_radius=0,state="disabled",height=40,command=self.start_frp)
         self.start_frp_button.place(relx=0.72,rely=0.85)
-    
-    # 处理鼠标按下事件
-    def on_drag_start(event):
-        App.winx=event.x
-        App.winy=event.y
-
-    # 处理鼠标移动事件
-    def on_drag(event):
-        deltax=event.x-App.winx
-        deltay=event.y-App.winy
-        new_x=GUI.tkObj.winfo_x()+deltax
-        new_y=GUI.tkObj.winfo_y()+deltay
-        GUI.tkObj.geometry(f"+{new_x}+{new_y}")
-
-    # 处理鼠标释放事件
-    def on_drag_stop(event):
-        App.winx=0
-        App.winy=0
 
     # 处理隧道信息
     def usertun_TidyUp():
@@ -161,6 +128,51 @@ class App(ctk.CTk):
         # 弹窗
         info_window.info("正在拉起frp核心","协议: \n连接地址: ")
 
+# 主窗口
+class Main(ctk.CTk):
+    def __init__(self):
+        super().__init__()
+        self.winx=0
+        self.winy=0
+        self.overrideredirect(True)
+        self.title("XingCheng Chmlfrp Lanucher - main")
+        self.configure(fg_color="#116ec8")
+        self.geometry("730x450")
+        self.iconbitmap("./chmlfrp.ico")
+        self.resizable(0, 0)
+        # 页面覆盖
+        self.main_tab_view=MainTabView(master=self)
+        self.main_tab_view.place(x=0,y=0)
+        # 关闭窗口按钮
+        self.close_win_button=ctk.CTkButton(self,text="x",width=30,height=30,font=("Arial",17,"bold"),command=self.close_win,fg_color="#116ec8",hover_color="#2582dc")
+        self.close_win_button.place(relx=0.95,y=4.5)
+        # 识别鼠标拖拽事件
+        self.bind("<ButtonPress-1>",Main.on_drag_start)
+        self.bind("<B1-Motion>",Main.on_drag)
+        self.bind("<ButtonRelease-1>",Main.on_drag_stop)
+    
+    # 关闭窗口
+    def close_win(self):
+        self.destroy()
+
+    # 处理鼠标按下事件
+    def on_drag_start(event):
+        Main.winx=event.x
+        Main.winy=event.y
+
+    # 处理鼠标移动事件
+    def on_drag(event):
+        deltax=event.x-Main.winx
+        deltay=event.y-Main.winy
+        new_x=GUI.tkObj.winfo_x()+deltax
+        new_y=GUI.tkObj.winfo_y()+deltay
+        GUI.tkObj.geometry(f"+{new_x}+{new_y}")
+
+    # 处理鼠标释放事件
+    def on_drag_stop(event):
+        Main.winx=0
+        Main.winy=0
+
 def run():
     login=Login()
     if path.isfile("./temp/AutmLogin.yml"):
@@ -178,5 +190,5 @@ def run():
         login.mainloop()
 
 def main():
-    GUI.tkObj=App()
+    GUI.tkObj=Main()
     GUI.tkObj.mainloop()
