@@ -65,38 +65,38 @@ class MainTabView(ctk.CTkTabview):
     def __init__(self,master):
         super().__init__(master,height=450,width=730,border_width=0,corner_radius=0,fg_color="#116ec8",segmented_button_fg_color="#116ec8",segmented_button_unselected_color="#116ec8",segmented_button_unselected_hover_color="#116ec8",segmented_button_selected_color="#ebebeb",segmented_button_selected_hover_color="#ebebeb",text_color="#aaaaaa")
         # 页面
-        self.add("   Main   ")
+        self.add("   启动   ")
         self.add("   隧道管理   ")
         # 处理/下载背景图片
         if not (User.LoginData['background_img']=='' or User.LoginData['background_img']==None):
             self.bg=Image.open(BytesIO(reqt.get(User.LoginData['background_img']).content))
             self.bg=self.bg.resize((730,420))
             self.bg=ImageTk.PhotoImage(self.bg)
-            self.bg_label_main=ctk.CTkLabel(self.tab("   Main   "),text="",image=self.bg)
-            self.bg_label_main.place(x=0,y=0)
+            self.bg_label_qd=ctk.CTkLabel(self.tab("   启动   "),text="",image=self.bg)
+            self.bg_label_qd.place(x=0,y=0)
             self.bg_label_tun=ctk.CTkLabel(self.tab("   隧道管理   "),text="",image=self.bg)
             self.bg_label_tun.place(x=0,y=0)
-        '''Main'''
+        '''启动'''
         # 左侧边栏背景
-        self.Left_sidebar_bg=ctk.CTkLabel(self.tab("   Main   "),text="",height=730,width=173,bg_color="#ebebeb")
-        self.Left_sidebar_bg.place(relx=0,rely=0)
+        self.qd_Left_sidebar_bg=ctk.CTkLabel(self.tab("   启动   "),text="",height=730,width=173,bg_color="#ebebeb")
+        self.qd_Left_sidebar_bg.place(relx=0,rely=0)
         # 用户头像
-        self.userimg=Image.open(BytesIO(reqt.get(User.LoginData['userimg']).content))
-        self.userimg=self.userimg.resize((47,47))
-        self.userimg=ImageTk.PhotoImage(self.userimg)
-        self.userimg_label=ctk.CTkLabel(self.tab("   Main   "),text="",image=self.userimg)
-        self.userimg_label.place(relx=0.02,rely=0.05)
+        self.qd_userimg=Image.open(BytesIO(reqt.get(User.LoginData['userimg']).content))
+        self.qd_userimg=self.qd_userimg.resize((47,47))
+        self.qd_userimg=ImageTk.PhotoImage(self.qd_userimg)
+        self.qd_userimg_label=ctk.CTkLabel(self.tab("   启动   "),text="",image=self.qd_userimg)
+        self.qd_userimg_label.place(relx=0.02,rely=0.05)
         # 用户邮箱/名字
-        self.useremail_label=ctk.CTkLabel(self.tab("   Main   "),text=User.LoginData["email"],font=("Arial",11),bg_color="#ebebeb")
-        self.useremail_label.place(x=68,y=40)
-        self.username_label=ctk.CTkLabel(self.tab("   Main   "),text=User.LoginData["username"],font=("Arial",16),bg_color="#ebebeb")
-        self.username_label.place(x=71,rely=0.05)
+        self.qd_useremail_label=ctk.CTkLabel(self.tab("   启动   "),text=User.LoginData["email"],font=("Arial",11),bg_color="#ebebeb")
+        self.qd_useremail_label.place(x=68,y=40)
+        self.qd_username_label=ctk.CTkLabel(self.tab("   启动   "),text=User.LoginData["username"],font=("Arial",16),bg_color="#ebebeb")
+        self.qd_username_label.place(x=71,rely=0.05)
         # start frp
         MainTabView.usertun_TidyUp()
-        self.optionmenu = ctk.CTkOptionMenu(self.tab("   Main   "),height=41,corner_radius=0,dynamic_resizing=False,command=self.optionmenu_callback,values=User.TunList)
-        self.optionmenu.place(relx=0.77,rely=0.85)
-        self.start_frp_button=ctk.CTkButton(self.tab("   Main   "),text="Start Frp\n#0 你TM倒是选a",corner_radius=0,state="disabled",height=40,command=self.start_frp)
-        self.start_frp_button.place(relx=0.72,rely=0.85)
+        self.qd_optionmenu = ctk.CTkOptionMenu(self.tab("   启动   "),height=41,corner_radius=0,dynamic_resizing=False,command=self.optionmenu_callback,values=User.TunList)
+        self.qd_optionmenu.place(relx=0.77,rely=0.85)
+        self.qd_start_frp_button=ctk.CTkButton(self.tab("   启动   "),text="Start Frp\n#0 你TM倒是选a",corner_radius=0,state="disabled",height=40,command=self.start_frp)
+        self.qd_start_frp_button.place(relx=0.72,rely=0.85)
 
     # 处理隧道信息
     def usertun_TidyUp():
