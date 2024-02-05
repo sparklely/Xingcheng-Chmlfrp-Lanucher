@@ -109,9 +109,12 @@ class MainTabView(ctk.CTkTabview):
                 return ["无数据"]
             return usertun[1]
         re_usertun_list=[]
+        re_usertun_dict={}
         for usertun_e in usertun[1]:
             re_usertun_list.append("#"+usertun_e["id"]+" "+usertun_e["name"]+" - "+usertun_e["type"])
+            re_usertun_dict[usertun_e["id"]]=usertun_e
         User.TunList=re_usertun_list
+        User.TunDict=re_usertun_dict
 
     # 更新start frp按钮
     def optionmenu_callback(self,choice):
@@ -129,7 +132,7 @@ class MainTabView(ctk.CTkTabview):
         # 启动
         StartFrp.start(tunID)
         # 弹窗
-        info_window.info("正在拉起frp核心","协议: \n连接地址: ")
+        info_window.info("正在拉起frp核心","协议: "+User.TunDict[tunID]["type"]+"\n连接地址: "+User.TunDict[tunID]["ip"])
 
 # 主窗口
 class Main(ctk.CTk):
