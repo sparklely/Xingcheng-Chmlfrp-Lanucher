@@ -113,14 +113,14 @@ class MainTabView(ctk.CTkTabview):
     # 更新start frp按钮
     def optionmenu_callback(self,choice):
         if "#" not in choice:
-            self.start_frp_button.configure(text=f"Start Frp\n{choice}")
+            self.qd_start_frp_button.configure(text=f"Start Frp\n{choice}")
         else:
-            self.start_frp_button.configure(text=f"Start Frp\n{choice}",state="normal")
+            self.qd_start_frp_button.configure(text=f"Start Frp\n{choice}",state="normal")
 
     # 启动frp
     def start_frp(self):
         # 获取启动tunID
-        tunID=self.start_frp_button.cget("text")
+        tunID=self.qd_start_frp_button.cget("text")
         tunID=tunID.split("\n")[1]
         tunID=tunID.split(" ")[0][1:]
         # 启动
