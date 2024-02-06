@@ -63,22 +63,11 @@ class Login(ctk.CTk):
 # 主窗口切换界面
 class MainTabView(ctk.CTkTabview):
     def __init__(self,master):
-        super().__init__(master,height=450,width=730,border_width=0,corner_radius=0,fg_color="#116ec8",segmented_button_fg_color="#116ec8",segmented_button_unselected_color="#116ec8",segmented_button_unselected_hover_color="#116ec8",segmented_button_selected_color="#ebebeb",segmented_button_selected_hover_color="#ebebeb",text_color="#aaaaaa")
+        super().__init__(master,height=450,width=730,corner_radius=13,segmented_button_selected_color="#ebebeb",segmented_button_selected_hover_color="#ebebeb",text_color="#aaaaaa")
         # 页面
         self.add("启动")
         self.add("隧道管理")
         self.add("设置")
-        # 处理/下载背景图片
-        if not (User.LoginData['background_img']=='' or User.LoginData['background_img']==None):
-            self.bg=Image.open(BytesIO(reqt.get(User.LoginData['background_img']).content))
-            self.bg=self.bg.resize((730,420))
-            self.bg=ImageTk.PhotoImage(self.bg)
-            self.bg_label_qd=ctk.CTkLabel(self.tab("启动"),text="",image=self.bg)
-            self.bg_label_qd.place(x=0,y=0)
-            self.bg_label_tun=ctk.CTkLabel(self.tab("隧道管理"),text="",image=self.bg)
-            self.bg_label_tun.place(x=0,y=0)
-            self.bg_label_sz=ctk.CTkLabel(self.tab("设置"),text="",image=self.bg)
-            self.bg_label_sz.place(x=0,y=0)
         '''启动'''
         # 左侧边栏背景
         self.qd_Left_sidebar_bg=ctk.CTkLabel(self.tab("启动"),text="",height=730,width=173,bg_color="#ebebeb")
@@ -143,39 +132,27 @@ class Main(ctk.CTk):
         self.overrideredirect(True)
         self.attributes('-topmost','true')
         self.title("XingCheng Chmlfrp Lanucher - main")
-        self.configure(fg_color="#116ec8")
+        self.configure(fg_color="#0000ff")
         self.geometry("730x450")
         self.iconbitmap("./chmlfrp.ico")
         self.resizable(0, 0)
+        # 透明化背景
+        self.wm_attributes('-transparentcolor','#0000ff')
+        # 标题栏背景
+        self.title_bar_bg=ctk.CTkLabel(self,text="",width=730,bg_color="#EFF7F3")
+        self.title_bar_bg.place(x=0,y=0)
         # 页面覆盖
         self.main_tab_view=MainTabView(master=self)
         self.main_tab_view.place(x=0,y=0)
         # 关闭窗口按钮
         self.close_win_button=ctk.CTkButton(self,text="x",width=30,height=30,font=("Arial",17,"bold"),command=self.close_win,fg_color="#116ec8",hover_color="#2582dc")
         self.close_win_button.place(relx=0.95,y=4.5)
-        # 最小化窗口按钮
-        self.min_win_button=ctk.CTkButton(self,text="-",width=30,height=30,font=("Arial",20),command=self.min_win,fg_color="#116ec8",hover_color="#2582dc")
-        self.min_win_button.place(relx=0.91,y=4.1)
         # 识别鼠标拖拽事件
         self.bind("<ButtonPress-1>",Main.on_drag_start)
         self.bind("<B1-Motion>",Main.on_drag)
         self.bind("<ButtonRelease-1>",Main.on_drag_stop)
-        # 识别窗口恢复
-        self.min_win_button.bind("<Map>",Main.wbk)
         # 取消一直顶置
         self.attributes('-topmost','false')
-    
-    # 恢复无边框
-    def wbk(event):
-        GUI.tkObj.update_idletasks()
-        GUI.tkObj.overrideredirect(True)
-        GUI.tkObj.state('normal')
-
-    # 最小化窗口
-    def min_win(self):
-        GUI.tkObj.update_idletasks()
-        GUI.tkObj.overrideredirect(False)
-        GUI.tkObj.state('iconic')
 
     # 关闭窗口
     def close_win(self):
