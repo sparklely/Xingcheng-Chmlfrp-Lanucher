@@ -60,10 +60,25 @@ class Login(ctk.CTk):
         # 创建对话窗口
         self.login_error_windows=ctk.CTkInputDialog(text=f"{error_info}", title="登录失败")
 
+# 左侧边栏用户信息
+class Left_Sidebar_Frame(ctk.CTkFrame):
+    def __init__(self,master):
+        super().__init__(master,width=158,fg_color="#e1e1e1",border_color="#e1e1e1")
+        self.user_id=ctk.CTkLabel(self,font=("微软雅黑",12.5),text="用户ID:  "+str(User.LoginData["userid"]))
+        self.user_id.place(x=13,y=3)
+        self.user_group=ctk.CTkLabel(self,font=("微软雅黑",12.5),text="权限组:  "+str(User.LoginData["usergroup"]))
+        self.user_group.place(x=13,y=28)
+        self.user_tun=ctk.CTkLabel(self,font=("微软雅黑",12.5),text="隧道数:  "+str(User.LoginData["tunnelstate"])+"/"+str(User.LoginData["tunnel"])+"条")
+        self.user_tun.place(x=13,y=53)
+        self.user_bandwidth=ctk.CTkLabel(self,font=("微软雅黑",12.5),text="限带宽:  "+str(User.LoginData["bandwidth"])+"m | "+str(User.LoginData["bandwidth"]*4)+"m")
+        self.user_bandwidth.place(x=13,y=78)
+        self.user_realname=ctk.CTkLabel(self,font=("微软雅黑",12.5),text="实名状态:  "+User.LoginData["realname"])
+        self.user_realname.place(x=13,y=103)
+
 # 主窗口切换界面
 class MainTabView(ctk.CTkTabview):
     def __init__(self,master):
-        super().__init__(master,height=480,width=810,corner_radius=13,fg_color="#ebebeb")
+        super().__init__(master,height=480,width=810,corner_radius=13,fg_color="#ebebeb",segmented_button_fg_color="#ebebeb",segmented_button_selected_color="#d7d7d7",segmented_button_unselected_hover_color="#d7d7d7",segmented_button_selected_hover_color="#d7d7d7",segmented_button_unselected_color="#ebebeb",text_color="#969696")
         # 页面
         self.add("启动")
         self.add("隧道管理")
@@ -94,6 +109,9 @@ class MainTabView(ctk.CTkTabview):
         self.qd_useremail_label.place(x=68,y=40)
         self.qd_username_label=ctk.CTkLabel(self.tab("启动"),text=User.LoginData["username"],font=("Arial",16),bg_color="#d7d7d7")
         self.qd_username_label.place(x=71,rely=0.05)
+        # 用户信息
+        self.qd_userinfo=Left_Sidebar_Frame(master=self)
+        self.qd_userinfo.place(x=21,rely=0.28)
         # start frp
         MainTabView.usertun_TidyUp()
         self.qd_optionmenu = ctk.CTkOptionMenu(self.tab("启动"),height=41,corner_radius=0,dynamic_resizing=False,command=self.optionmenu_callback,values=User.TunList)
