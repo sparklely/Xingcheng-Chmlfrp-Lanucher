@@ -60,6 +60,23 @@ class Login(ctk.CTk):
         # 创建对话窗口
         self.login_error_windows=ctk.CTkInputDialog(text=f"{error_info}", title="登录失败")
 
+# 隧道信息卡
+class Tun_Info_Card(ctk.CTkFrame):
+    def __init__(self,master,tundata):
+        super().__init__(master)
+
+# 隧道滑动条窗口
+class Tun_Info_win(ctk.CTkScrollableFrame):
+    def __init__(self,master):
+        super().__init__(master,border_width=0,corner_radius=0,width=768,height=420)
+        self.figure=0
+        self.list_tun_info_card=[]
+        if User.TunData!=None:
+            for tundata in User.TunData:
+                self.list_tun_info_card.append(Tun_Info_Card(master=self,tundata=tundata))
+                self.list_tun_info_card[self.figure].grid(row=self.figure, column=0, pady=(0, 10))
+                self.figure+=1
+                
 # 左侧边栏用户信息
 class Left_Sidebar_Frame(ctk.CTkFrame):
     def __init__(self,master):
@@ -110,29 +127,29 @@ class MainTabView(ctk.CTkTabview):
         self.qd_username_label=ctk.CTkLabel(self.tab("启动"),text=User.LoginData["username"],font=("Arial",16),bg_color="#d7d7d7")
         self.qd_username_label.place(x=71,rely=0.05)
         # 用户信息
-        self.qd_userinfo=Left_Sidebar_Frame(master=self)
-        self.qd_userinfo.place(x=21,rely=0.28)
+        self.qd_userinfo=Left_Sidebar_Frame(master=self.tab("启动"))
+        self.qd_userinfo.place(x=8,rely=0.23)
         # start frp
         MainTabView.usertun_TidyUp()
-        self.qd_optionmenu = ctk.CTkOptionMenu(self.tab("启动"),height=41,corner_radius=0,dynamic_resizing=False,command=self.optionmenu_callback,values=User.TunList)
+        self.qd_optionmenu=ctk.CTkOptionMenu(self.tab("启动"),height=41,corner_radius=0,dynamic_resizing=False,command=self.optionmenu_callback,values=User.TunList)
         self.qd_optionmenu.place(relx=0.77,rely=0.85)
         self.qd_start_frp_button=ctk.CTkButton(self.tab("启动"),text="Start Frp\n#0 你TM倒是选a",corner_radius=0,state="disabled",height=40,command=self.start_frp)
         self.qd_start_frp_button.place(relx=0.72,rely=0.85)
+        '''隧道管理'''
+        # 隧道滑动条窗口覆盖
+        self.tun_win=Tun_Info_win(master=self.tab("隧道管理"))
+        self.tun_win.place(x=0,y=0)
 
     # 处理隧道信息
     def usertun_TidyUp():
         usertun=ChmlfrpAPI.user_tun()
-        if usertun[0]==False:
-            if usertun[1]==None:
-                return ["无数据"]
-            return usertun[1]
-        re_usertun_list=[]
-        re_usertun_dict={}
-        for usertun_e in usertun[1]:
-            re_usertun_list.append("#"+usertun_e["id"]+" "+usertun_e["name"]+" - "+usertun_e["type"])
-            re_usertun_dict[usertun_e["id"]]=usertun_e
-        User.TunList=re_usertun_list
-        User.TunDict=re_usertun_dict
+        if usertun[0]:
+            User.TunData=usertun[1]
+            for tuninfo in usertun[1]:
+                User.TunList.append("#"+tuninfo["id"]+" "+tuninfo["name"])
+                User.TunDict["id"]=tuninfo
+        else:
+            User.TunList.append("请先创建隧道")
 
     # 更新start frp按钮
     def optionmenu_callback(self,choice):
@@ -193,21 +210,23 @@ class Main(ctk.CTk):
 
     # 处理鼠标按下事件
     def on_drag_start(event):
-        Main.winx=event.x
-        Main.winy=event.y
+        if str(event.widget)==".!maintabview" or str(event.widget)==".!maintabview.!ctkcanvas":
+            GUI.tkObj.winx=event.x
+            GUI.tkObj.winy=event.y
 
     # 处理鼠标移动事件
     def on_drag(event):
-        deltax=event.x-Main.winx
-        deltay=event.y-Main.winy
-        new_x=GUI.tkObj.winfo_x()+deltax
-        new_y=GUI.tkObj.winfo_y()+deltay
-        GUI.tkObj.geometry(f"+{new_x}+{new_y}")
+        if GUI.tkObj.winy!=0:
+            deltax=event.x-GUI.tkObj.winx
+            deltay=event.y-GUI.tkObj.winy
+            new_x=GUI.tkObj.winfo_x()+deltax
+            new_y=GUI.tkObj.winfo_y()+deltay
+            GUI.tkObj.geometry(f"+{new_x}+{new_y}")
 
     # 处理鼠标释放事件
     def on_drag_stop(event):
-        Main.winx=0
-        Main.winy=0
+        GUI.tkObj.winx=0
+        GUI.tkObj.winy=0
 
 def run():
     login=Login()

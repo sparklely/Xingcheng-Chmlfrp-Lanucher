@@ -7,8 +7,9 @@ JSON: TypeAlias = dict
 class User:
     id: int = None
     token: str = None
-    TunList: list = None
-    TunDict: dict = None
+    TunList: list = []
+    TunDict: dict = {}
+    TunData: list = None
     LoginData: dict = None
 
 class GUI:
