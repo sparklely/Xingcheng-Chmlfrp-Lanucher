@@ -13,6 +13,8 @@ import tkinter.messagebox
 class info_window:
     def info(title:str,text:str):
         tkinter.messagebox.showinfo(title=title,message=text)
+    def yesno(title:str,text:str):
+        return tkinter.messagebox.askyesno(title=title,message=text)
 
 class Login(ctk.CTk):
     def __init__(self):
@@ -63,7 +65,7 @@ class Login(ctk.CTk):
 # 隧道信息卡
 class Tun_Info_Card(ctk.CTkFrame):
     def __init__(self,master,tundata):
-        super().__init__(master,fg_color="#e5e5e5",width=245,height=178,corner_radius=10)
+        super().__init__(master,fg_color="#e5e5e5",width=245,height=183,corner_radius=12)
         # 隧道id
         self.tun_id=ctk.CTkLabel(self,text="#"+tundata["id"],font=("微软雅黑",15.5))
         self.tun_id.place(x=13,y=7)
@@ -74,16 +76,28 @@ class Tun_Info_Card(ctk.CTkFrame):
         # 节点信息
         ctk.CTkLabel(self,text="节点信息: "+tundata["node"],font=("微软雅黑",13)).place(x=13,y=57)
         # 连接地址
-        ctk.CTkLabel(self,text="连接地址: "+tundata["ip"],font=("微软雅黑",13)).place(x=13,y=77)
+        try:
+            ctk.CTkLabel(self,text="连接地址: "+tundata["ip"],font=("微软雅黑",13)).place(x=13,y=77)
+        except:
+            ctk.CTkLabel(self,text="连接地址: ",font=("微软雅黑",13)).place(x=13,y=77)
         # 启动隧道按钮
-        ctk.CTkButton(self,text="启动隧道",command=self.start_frp,fg_color="#e5e5ec",width=219,hover_color="#e2e2e9",border_width=1,border_color="#409eff",text_color="#409eff").place(x=13,y=107)
+        ctk.CTkButton(self,text="启动隧道",command=self.start_frp,fg_color="#e5e5ec",width=219,hover_color="#e2e2e9",border_width=1,border_color="#409eff",text_color="#409eff").place(x=13,y=108)
+        # 删除隧道按钮
+        ctk.CTkButton(self,text="删除隧道",command=self.del_tun,fg_color="#ece5e5",width=219,hover_color="#e9e2e2",border_width=1,border_color="#f56c6c",text_color="#f56c6c").place(x=13,y=143)
     
     # 启动frp
     def start_frp(self):
         # 启动
         StartFrp.start(self.tun_id.cget("text")[1:])
         # 弹窗
-        info_window.info("正在拉起frp核心","协议: "+User.TunDict[int(self.tun_id.cget("text")[1:])]["type"]+"\n连接地址: "+User.TunDict[int(self.tun_id.cget("text")[1:])]["ip"])
+        info_window.info("正在拉起frp核心","协议: "+User.TunDict[self.tun_id.cget("text")[1:]]["type"]+"\n连接地址: "+User.TunDict[self.tun_id.cget("text")[1:]]["ip"])
+
+    # 删除隧道
+    def del_tun(self):
+        tunid=self.tun_id.cget("text")[1:]
+        if info_window.yesno("删除隧道",f"您现在正在删除隧道 #{tunid} ,请确认是否删除"):
+            if not ChmlfrpAPI.del_tun(self.tun_id.cget("text")[1:])[0]:
+                info_window.info("删除隧道","无法删除,隧道不属于你或不存在")
 
 # 隧道滑动条窗口
 class Tun_Info_win(ctk.CTkScrollableFrame):
@@ -168,7 +182,7 @@ class MainTabView(ctk.CTkTabview):
             User.TunData=usertun[1]
             for tuninfo in usertun[1]:
                 User.TunList.append("#"+tuninfo["id"]+" "+tuninfo["name"])
-                User.TunDict["id"]=tuninfo
+                User.TunDict[tuninfo["id"]]=tuninfo
         else:
             User.TunList.append("请先创建隧道")
 
@@ -188,7 +202,6 @@ class MainTabView(ctk.CTkTabview):
         # 启动
         StartFrp.start(tunID)
         # 弹窗
-        print(User.TunDict)
         info_window.info("正在拉起frp核心","协议: "+User.TunDict[tunID]["type"]+"\n连接地址: "+User.TunDict[tunID]["ip"])
 
 # 主窗口

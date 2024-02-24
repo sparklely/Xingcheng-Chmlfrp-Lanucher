@@ -29,3 +29,15 @@ def user_tun():
             return True,data
     except:
         return False,None
+
+# 删除隧道
+def del_tun(tun_id):
+    try:
+        log.info(f"token:{User.token} 正在删除隧道 id:{tun_id}")
+        data=requests.get("https://panel.chmlfrp.cn/api/deletetl.php",{"token":User.token,"userid":User.id,"nodeid":tun_id}).json()
+        if data["code"]==200:
+            return True,None
+        else:
+            return False,data["error"]
+    except:
+        return False,None
