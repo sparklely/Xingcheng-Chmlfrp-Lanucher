@@ -162,4 +162,4 @@ frpc.ini
 temp/
 frp/
 out/
-start.exe
+main.exe

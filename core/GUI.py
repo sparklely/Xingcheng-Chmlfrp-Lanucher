@@ -63,7 +63,18 @@ class Login(ctk.CTk):
 # 隧道信息卡
 class Tun_Info_Card(ctk.CTkFrame):
     def __init__(self,master,tundata):
-        super().__init__(master)
+        super().__init__(master,fg_color="#e5e5e5",width=245,height=178,corner_radius=10)
+        # 隧道id
+        ctk.CTkLabel(self,text="#"+tundata["id"],font=("微软雅黑",15.5)).place(x=13,y=7)
+        # 隧道名称
+        ctk.CTkLabel(self,text=tundata["name"],font=("微软雅黑",15.5,"bold")).place(x=(len(tundata["id"])+2)*9+13,y=7)
+        # 内网地址
+        ctk.CTkLabel(self,text="内网地址: "+tundata["localip"]+":"+tundata["nport"]+" - "+tundata["type"],font=("微软雅黑",13)).place(x=13,y=37)
+        # 节点信息
+        ctk.CTkLabel(self,text="节点信息: "+tundata["node"],font=("微软雅黑",13)).place(x=13,y=57)
+        # 连接地址
+        ctk.CTkLabel(self,text="连接地址: "+tundata["ip"],font=("微软雅黑",13)).place(x=13,y=77)
+        
 
 # 隧道滑动条窗口
 class Tun_Info_win(ctk.CTkScrollableFrame):
@@ -72,9 +83,10 @@ class Tun_Info_win(ctk.CTkScrollableFrame):
         self.figure=0
         self.list_tun_info_card=[]
         if User.TunData!=None:
+            # 遍历创建隧道信息卡
             for tundata in User.TunData:
                 self.list_tun_info_card.append(Tun_Info_Card(master=self,tundata=tundata))
-                self.list_tun_info_card[self.figure].grid(row=self.figure, column=0, pady=(0, 10))
+                self.list_tun_info_card[self.figure].grid(row=int(self.figure/3),column=int(self.figure%3),pady=7,padx=6)
                 self.figure+=1
                 
 # 左侧边栏用户信息
@@ -210,6 +222,7 @@ class Main(ctk.CTk):
 
     # 处理鼠标按下事件
     def on_drag_start(event):
+        # 识别按下位置
         if str(event.widget)==".!maintabview" or str(event.widget)==".!maintabview.!ctkcanvas":
             GUI.tkObj.winx=event.x
             GUI.tkObj.winy=event.y
