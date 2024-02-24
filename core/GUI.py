@@ -9,7 +9,6 @@ import requests as reqt
 import customtkinter as ctk
 import tkinter.messagebox
 
-
 class info_window:
     def info(title:str,text:str):
         tkinter.messagebox.showinfo(title=title,message=text)
@@ -98,6 +97,9 @@ class Tun_Info_Card(ctk.CTkFrame):
         if info_window.yesno("删除隧道",f"您现在正在删除隧道 #{tunid} ,请确认是否删除"):
             if not ChmlfrpAPI.del_tun(self.tun_id.cget("text")[1:])[0]:
                 info_window.info("删除隧道","无法删除,隧道不属于你或不存在")
+            else:
+                # 刷新隧道
+                GUI.tkObj.main_tab_view.refresh_tun()
 
 # 隧道滑动条窗口
 class Tun_Info_win(ctk.CTkScrollableFrame):
@@ -175,9 +177,22 @@ class MainTabView(ctk.CTkTabview):
         self.tun_win=Tun_Info_win(master=self.tab("隧道管理"))
         self.tun_win.place(x=0,y=0)
 
+    # 刷新隧道
+    def refresh_tun(self):
+        MainTabView.usertun_TidyUp()
+        # 主页面start frp
+        self.qd_optionmenu.configure(values=User.TunList)
+        # 隧道滑动条窗口覆盖
+        self.tun_win.destroy()
+        self.tun_win=Tun_Info_win(master=self.tab("隧道管理"))
+        self.tun_win.place(x=0,y=0)
+
     # 处理隧道信息
     def usertun_TidyUp():
         usertun=ChmlfrpAPI.user_tun()
+        # 初始化
+        User.TunList=[]
+        User.TunDict={}
         if usertun[0]:
             User.TunData=usertun[1]
             for tuninfo in usertun[1]:
