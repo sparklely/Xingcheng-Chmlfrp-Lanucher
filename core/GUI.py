@@ -65,7 +65,8 @@ class Tun_Info_Card(ctk.CTkFrame):
     def __init__(self,master,tundata):
         super().__init__(master,fg_color="#e5e5e5",width=245,height=178,corner_radius=10)
         # 隧道id
-        ctk.CTkLabel(self,text="#"+tundata["id"],font=("微软雅黑",15.5)).place(x=13,y=7)
+        self.tun_id=ctk.CTkLabel(self,text="#"+tundata["id"],font=("微软雅黑",15.5))
+        self.tun_id.place(x=13,y=7)
         # 隧道名称
         ctk.CTkLabel(self,text=tundata["name"],font=("微软雅黑",15.5,"bold")).place(x=(len(tundata["id"])+2)*9+13,y=7)
         # 内网地址
@@ -74,7 +75,15 @@ class Tun_Info_Card(ctk.CTkFrame):
         ctk.CTkLabel(self,text="节点信息: "+tundata["node"],font=("微软雅黑",13)).place(x=13,y=57)
         # 连接地址
         ctk.CTkLabel(self,text="连接地址: "+tundata["ip"],font=("微软雅黑",13)).place(x=13,y=77)
-        
+        # 启动隧道按钮
+        ctk.CTkButton(self,text="启动隧道",command=self.start_frp,fg_color="#e5e5ec",width=219,hover_color="#e2e2e9",border_width=1,border_color="#409eff",text_color="#409eff").place(x=13,y=107)
+    
+    # 启动frp
+    def start_frp(self):
+        # 启动
+        StartFrp.start(self.tun_id.cget("text")[1:])
+        # 弹窗
+        info_window.info("正在拉起frp核心","协议: "+User.TunDict[int(self.tun_id.cget("text")[1:])]["type"]+"\n连接地址: "+User.TunDict[int(self.tun_id.cget("text")[1:])]["ip"])
 
 # 隧道滑动条窗口
 class Tun_Info_win(ctk.CTkScrollableFrame):
@@ -179,6 +188,7 @@ class MainTabView(ctk.CTkTabview):
         # 启动
         StartFrp.start(tunID)
         # 弹窗
+        print(User.TunDict)
         info_window.info("正在拉起frp核心","协议: "+User.TunDict[tunID]["type"]+"\n连接地址: "+User.TunDict[tunID]["ip"])
 
 # 主窗口
