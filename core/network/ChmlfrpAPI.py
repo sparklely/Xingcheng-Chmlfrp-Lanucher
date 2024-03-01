@@ -41,3 +41,33 @@ def del_tun(tun_id):
             return False,data["error"]
     except:
         return False,None
+
+# 节点信息
+def node():
+    try:
+        log.info("尝试获取隧道信息")
+        return requests.get("https://panel.chmlfrp.cn/api/unode.php").json()
+    except:
+        return [{"name":"无数据"}]
+
+# add隧道
+def addtun(type,nport,node,name,localip,dorp):
+    try:
+        log.info("尝试获取隧道信息")
+        data=requests.get("https://panel.chmlfrp.cn/api/tunnel.php",
+        {
+            "token":User.token,
+            "userid":User.id,
+            "type":type,
+            "nport":nport,
+            "node":node,
+            "name":name,
+            "localip":localip,
+            "dorp":dorp
+            }).json()
+        if data["code"]==200:
+            return True,"创建成功"
+        else:
+            return False,data["error"]
+    except:
+        return False,"无法请求api"

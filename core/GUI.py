@@ -101,18 +101,93 @@ class Tun_Info_Card(ctk.CTkFrame):
                 # 刷新隧道
                 GUI.tkObj.main_tab_view.refresh_tun()
 
+# add隧道弹窗
+class add_tun(ctk.CTkToplevel):
+    def __init__(self,master):
+        super().__init__(master)
+        self.title("XingCheng Chmlfrp Lanucher - addtun")
+        self.resizable(0, 0)
+        self.attributes('-topmost','true')
+        # 顶栏
+        ctk.CTkLabel(self,text="创建隧道",font=("微软雅黑",18,"bold")).grid(row=0,column=0,pady=5,padx=12,sticky="w")
+        # 隧道名称
+        ctk.CTkLabel(self,text="隧道名称").grid(row=1,column=0,pady=0,padx=15,sticky="w")
+        self.tun_name=ctk.CTkEntry(self,width=160,height=23)
+        self.tun_name.grid(row=2,column=0,pady=0,padx=15,sticky="w")
+        # 节点选择
+        ctk.CTkLabel(self,text="节点选择").grid(row=1,column=1,pady=0,padx=15,sticky="w")
+        self.tun_node=ctk.CTkOptionMenu(self,width=160,height=23,values=add_tun.node_data())
+        self.tun_node.grid(row=2,column=1,pady=0,padx=15,sticky="w")
+        # 内网地址
+        ctk.CTkLabel(self,text="内网地址").grid(row=3,column=0,pady=0,padx=15,sticky="w")
+        self.tun_lip=ctk.CTkEntry(self,width=160,height=23)
+        self.tun_lip.insert(0,"127.0.0.1")
+        self.tun_lip.grid(row=4,column=0,pady=0,padx=15,sticky="w")
+        # 内网端口
+        ctk.CTkLabel(self,text="内网端口").grid(row=3,column=1,pady=0,padx=15,sticky="w")
+        self.tun_lport=ctk.CTkEntry(self,width=160,height=23)
+        self.tun_lport.grid(row=4,column=1,pady=0,padx=15,sticky="w")
+        # 外网端口
+        ctk.CTkLabel(self,text="外网端口").grid(row=5,column=0,pady=0,padx=15,sticky="w")
+        self.tun_wport=ctk.CTkEntry(self,width=160,height=23)
+        self.tun_wport.grid(row=6,column=0,pady=0,padx=15,sticky="w")
+        # 端口类型
+        ctk.CTkLabel(self,text="端口类型").grid(row=5,column=1,pady=0,padx=15,sticky="w")
+        self.tun_type=ctk.CTkOptionMenu(self,width=160,height=23,values=["tcp","udp","http","https"])
+        self.tun_type.grid(row=6,column=1,pady=0,padx=15,sticky="w")
+        # 创建隧道
+        ctk.CTkButton(self,text="创建隧道",command=self.addtun).grid(row=7,column=1,pady=10,padx=10,sticky="e")
+
+    # 创建隧道
+    def addtun(self):
+        data=ChmlfrpAPI.addtun(
+            name=self.tun_name.get(),
+            nport=self.tun_lport.get(),
+            node=self.tun_node.get(),
+            localip=self.tun_lip.get(),
+            dorp=self.tun_wport.get(),
+            type=self.tun_type.get())
+        # 弹窗
+        if data[0]:
+            # 刷新隧道
+            GUI.tkObj.main_tab_view.refresh_tun()
+            info_window.info("创建隧道","创建隧道成功")
+        else:
+            info_window.info("创建隧道失败",data[1])
+
+    # 节点数据处理
+    def node_data():
+        data=[]
+        # 仅显示有权限的节点
+        if User.LoginData["usergroup"]!="免费用户":
+            for t_data in ChmlfrpAPI.node():
+                data.append(t_data["name"])
+        else:
+            for t_data in ChmlfrpAPI.node():
+                if t_data["nodegroup"]=="user":
+                    data.append(t_data["name"])
+        return data
+
 # 隧道滑动条窗口
 class Tun_Info_win(ctk.CTkScrollableFrame):
     def __init__(self,master):
         super().__init__(master,border_width=0,corner_radius=0,width=768,height=420)
-        self.figure=0
+        # add 隧道卡片
+        self.add_tun_card=ctk.CTkButton(self,text="+",font=("微软雅黑",60),command=self.addtun,fg_color="#e9e9e9",hover_color="#e5e5e5",text_color="#c3c3c3",width=245,height=183,corner_radius=12)
+        self.add_tun_card.grid(row=0,column=0,pady=7,padx=6)
+        # 隧道信息卡
+        self.figure=1
         self.list_tun_info_card=[]
         if User.TunData!=None:
             # 遍历创建隧道信息卡
             for tundata in User.TunData:
                 self.list_tun_info_card.append(Tun_Info_Card(master=self,tundata=tundata))
-                self.list_tun_info_card[self.figure].grid(row=int(self.figure/3),column=int(self.figure%3),pady=7,padx=6)
+                self.list_tun_info_card[self.figure-1].grid(row=int(self.figure/3),column=int(self.figure%3),pady=7,padx=6)
                 self.figure+=1
+
+    # 新建隧道弹窗
+    def addtun(self):
+        add_tun(master=self)
                 
 # 左侧边栏用户信息
 class Left_Sidebar_Frame(ctk.CTkFrame):
