@@ -6,7 +6,7 @@ from core.module import log
 # 登录
 def login(Name,Password):
     try:
-        data=requests.get("https://panel.chmlfrp.cn/api/login.php",{"username": Name,"password":Password}).json()
+        data=requests.get("https://cf-v1.uapis.cn/api/login.php",{"username": Name,"password":Password}).json()
         log.info("尝试登录...")
         # 放入数据
         User.id = data['userid']
@@ -21,7 +21,7 @@ def login(Name,Password):
 def user_tun():
     try:
         log.info(f"token:{User.token} 尝试获取隧道信息")
-        data=requests.get("https://panel.chmlfrp.cn/api/usertunnel.php",{"token":User.token}).json()
+        data=requests.get("https://cf-v1.uapis.cn/api/usertunnel.php",{"token":User.token}).json()
         try:
             if data["code"]==404:
                 return False,["请先创建隧道"]
@@ -34,7 +34,7 @@ def user_tun():
 def del_tun(tun_id):
     try:
         log.info(f"token:{User.token} 正在删除隧道 id:{tun_id}")
-        data=requests.get("https://panel.chmlfrp.cn/api/deletetl.php",{"token":User.token,"userid":User.id,"nodeid":tun_id}).json()
+        data=requests.get("https://cf-v1.uapis.cn/api/deletetl.php",{"token":User.token,"userid":User.id,"nodeid":tun_id}).json()
         if data["code"]==200:
             return True,None
         else:
@@ -46,7 +46,7 @@ def del_tun(tun_id):
 def node():
     try:
         log.info("尝试获取隧道信息")
-        return requests.get("https://panel.chmlfrp.cn/api/unode.php").json()
+        return requests.get("https://cf-v1.uapis.cn/api/unode.php").json()
     except:
         return [{"name":"无数据"}]
 
@@ -54,7 +54,7 @@ def node():
 def addtun(type,nport,node,name,localip,dorp):
     try:
         log.info("尝试获取隧道信息")
-        data=requests.get("https://panel.chmlfrp.cn/api/tunnel.php",
+        data=requests.get("https://cf-v1.uapis.cn/api/tunnel.php",
         {
             "token":User.token,
             "userid":User.id,
